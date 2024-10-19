@@ -1,12 +1,15 @@
 import { useState } from "react";
+import axios from "axios";
 
 function EnquiryForm() {
-  const [enquiryForm, setEnquiryForm] = useState({
+  const defaultEnquiry = {
     name: "",
     emailAddress: "",
     category: "Service Request",
     message: "",
-  });
+  };
+
+  const [enquiryForm, setEnquiryForm] = useState(defaultEnquiry);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +23,20 @@ function EnquiryForm() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    console.log("Submitted Form is", enquiryForm);
+    axios
+      .post(`${import.meta.env.VITE_API_BASE_URL}/enquiry`, enquiryForm, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(() => {
+        setEnquiryForm(defaultEnquiry);
+        alert("Enquiry Submitted");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Unable to submit the enquiry");
+      });
   };
 
   return (
